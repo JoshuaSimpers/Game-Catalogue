@@ -13,4 +13,29 @@ public class Game {
         this.rating = rating;
         this.numberOfCopies = copies;
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getConsole() {
+        return this.console;
+    }
+
+    public String getYear() {
+        return this.releaseYear;
+    }
+
+    public String getRating() {
+        return this.rating;
+    }
+
+    public Integer getCopies() {
+        return this.numberOfCopies;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + getName() + ", Platform: " + getConsole() + ", Year: " + getYear() + ", Rating: " + getRating() + ", Number of Copies: " + getCopies();
+    }
 }
