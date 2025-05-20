@@ -10,13 +10,14 @@ public class UserInterface {
     
     private Scanner scanner = new Scanner(System.in);
     private ArrayList<Game> gameList = new ArrayList<>();
+    private Integer exitCondition = 0;
 
     public UserInterface() {
 
     }
 
     public void start() {
-        System.out.println("==Video Game Catalogue v0.1 by Joshua Simpers==");
+        System.out.println("==Video Game Catalogue v0.2.0 by Joshua Simpers==");
         createFile();
         readFile();
         readCommands();
@@ -48,7 +49,7 @@ public class UserInterface {
                 gameList.add(new Game(gameData[0], gameData[1], gameData[2], gameData[3], Integer.valueOf(gameData[4])));
             }
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println(e.getMessage());
         }
     }
 
@@ -100,45 +101,31 @@ public class UserInterface {
     }
 
     public void addGameToCatalogue() {
-        while (true) {
-            System.out.println("Name: ");
-            String inputName = scanner.nextLine();
-            if (inputName.isEmpty()) {
-                System.out.println("Nothing was entered. Cancelling...");
-                break;
-            }
-            String name = inputName;
-            System.out.println("Platform: ");
-            String inputPlatform = scanner.nextLine();
-            if (inputPlatform.isEmpty()) {
-                System.out.println("Nothing was entered. Cancelling...");
-                break;
-            }
-            String platform = inputPlatform;
-            System.out.println("Year: ");
-            String inputYear = scanner.nextLine();
-            if (inputYear.isEmpty()) {
-                System.out.println("Nothing was entered. Cancelling...");
-                break;
-            }
-            String year = inputYear;
-            System.out.println("Rating: ");
-            String inputRating = scanner.nextLine();
-            if (inputRating.isEmpty()) {
-                System.out.println("Nothing was entered. Cancelling...");
-                break;
-            }
-            String rating = inputRating;
-            System.out.println("Number of Copies: ");
-            String inputCopies = scanner.nextLine();
-            if (inputCopies.isEmpty()) {
-                System.out.println("Nothing was entered. Cancelling...");
-                break;
-            }
-            Integer copies = Integer.valueOf(inputCopies);
-            gameList.add(new Game(name, platform, year, rating, copies));
-            writeToFile(name, platform, year, rating, copies);
-            break;
+        System.out.println("Name: ");
+        String name = readInput();
+        System.out.println("Platform: ");
+        String platform = readInput();
+        System.out.println("Year: ");
+        String year = readInput();
+        System.out.println("Rating: ");
+        String rating = readInput();
+        System.out.println("Number of Copies: ");
+        String copies = readInput();
+        Integer copiesToInt = Integer.valueOf(copies);
+        gameList.add(new Game(name, platform, year, rating, copiesToInt));
+        writeToFile(name, platform, year, rating, copiesToInt);
+    }
+
+    public String readInput() {
+        String input = scanner.nextLine();
+        if (input.isEmpty()) {
+            System.out.println("Invalid value! Game could not be added to catalogue!");
+            readCommands();
         }
+        return input;
+    }
+
+    public boolean stringIsEmpty(String input) {
+        return input.isEmpty();
     }
 }
