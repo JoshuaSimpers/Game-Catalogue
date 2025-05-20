@@ -34,6 +34,14 @@ public class Game {
         return this.numberOfCopies;
     }
 
+    public void decreaseCopies(int amount) {
+        this.numberOfCopies = this.numberOfCopies - amount;
+    }
+
+    public void increaseCopies(int amount) {
+        this.numberOfCopies += amount;
+    }
+
     @Override
     public String toString() {
         return "Name: " + getName() + ", Platform: " + getConsole() + ", Year: " + getYear() + ", Rating: " + getRating() + ", Number of Copies: " + getCopies();
