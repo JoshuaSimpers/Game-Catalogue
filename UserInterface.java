@@ -16,7 +16,7 @@ public class UserInterface {
     }
 
     public void start() {
-        System.out.println("==Video Game Catalogue v0.5.1 by Joshua Simpers==");
+        System.out.println("== Video Game Catalogue v0.5.1 by Joshua Simpers ==");
         createFile();
         readFile();
         readCommands();
@@ -65,11 +65,11 @@ public class UserInterface {
     }
 
     public void listCommands() {
-        System.out.println("==List - Lists all games in the catalogue==");
-        System.out.println("==Add - Adds a game to the catalogue==");
-        System.out.println("==Exit - Exits the application==");
-        System.out.println("==Remove - Removes a game from the list==");
-        System.out.println("==Find - Finds games based on the user criteria==");
+        System.out.println("== List - Lists all games in the catalogue ==");
+        System.out.println("== Add - Adds a game to the catalogue ==");
+        System.out.println("== Exit - Exits the application ==");
+        System.out.println("== Remove - Removes a game from the list ==");
+        System.out.println("== Find - Finds games based on the user criteria ==");
     }
 
     public void readCommands() {
@@ -194,11 +194,11 @@ public class UserInterface {
     }
 
     public void listFindCommands() {
-        System.out.println("==Year - Finds games based on the desired year==");
-        System.out.println("==Platform - Finds games based on the platform of release==");
-        System.out.println("==Rating - Finds games by their ESRB rating==");
-        System.out.println("==Name - Finds games that match the given name==");
-        System.out.println("==Cancel - returns to the previous menu==");
+        System.out.println("== Year - Finds games based on the desired yea r==");
+        System.out.println("== Platform - Finds games based on the platform of release ==");
+        System.out.println("== Rating - Finds games by their ESRB rating ==");
+        System.out.println("== Name - Finds games that match the given name ==");
+        System.out.println("== Cancel - returns to the previous menu ==");
         System.out.println("Command:");
     }
 
@@ -214,9 +214,13 @@ public class UserInterface {
                 targetGamesList.add(nextGame);
             }
         }
-        System.out.println("Found: " + targetGamesList.size() + " game(s) that match:");
-        for (Game groupedGame : targetGamesList) {
-            System.out.println(groupedGame.toString());
+        if (targetGamesList.isEmpty()) {
+            System.out.println("Found 0 games that match.");
+        } else {
+            System.out.println("Found: " + targetGamesList.size() + " game(s) that match:");
+            for (Game groupedGame : targetGamesList) {
+                System.out.println(groupedGame.toString());
+            }
         }
     }
 

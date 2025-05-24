@@ -1,0 +1,2 @@
+javac GameCatalogue.java
+java GameCatalogue
