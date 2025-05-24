@@ -16,7 +16,7 @@ public class UserInterface {
     }
 
     public void start() {
-        System.out.println("==Video Game Catalogue v0.4.0 by Joshua Simpers==");
+        System.out.println("==Video Game Catalogue v0.5.1 by Joshua Simpers==");
         createFile();
         readFile();
         readCommands();
@@ -181,20 +181,13 @@ public class UserInterface {
             listFindCommands();
             String findCommand = scanner.nextLine();
             findCommand = santitizeString(findCommand);
-            if (findCommand.equals("year")) {
-
-            } else if (findCommand.equals("platform")) {
-
-            } else if (findCommand.equals("rating")) {
-
-            } else if (findCommand.equals("name")) {
-                findGameByName();
-                //continue;
-            } else if (findCommand.equals("cancel")) {
+            if (findCommand.equals("cancel")) {
                 readCommands();
-            } else {
+            } else if (!findCommand.equals("year") && !findCommand.equals("platform") && !findCommand.equals("rating") && !findCommand.equals("name")) {
                 System.out.println("Invalid command! Try again!");
                 continue;
+            } else {
+                findGames(findCommand);
             }
             break;
         }
@@ -206,24 +199,38 @@ public class UserInterface {
         System.out.println("==Rating - Finds games by their ESRB rating==");
         System.out.println("==Name - Finds games that match the given name==");
         System.out.println("==Cancel - returns to the previous menu==");
+        System.out.println("Command:");
     }
 
-    public void findGameByName() {
-        System.out.println("Name:");
-        String nameToFind = readInput();
-        nameToFind = santitizeString(nameToFind);
-        ArrayList<Game> gamesByName = new ArrayList<>();
-        for (Game game : gameList) {
-            String currentName = game.getName();
-            currentName = santitizeString(currentName);
-            if (currentName.equals(nameToFind)) {
-                gamesByName.add(game);
+    public void findGames(String type) {
+        System.out.println("Enter the desired " + type + ":");
+        String desiredType = readInput();
+        desiredType = santitizeString(desiredType);
+        ArrayList<Game> targetGamesList = new ArrayList<>();
+        for (Game nextGame : gameList) {
+            String currentTargetType = returnData(type, nextGame);
+            currentTargetType = santitizeString(currentTargetType);
+            if (currentTargetType.contains(desiredType)) {
+                targetGamesList.add(nextGame);
             }
         }
-        System.out.println("Found " + gamesByName.size() + " game(s) that match:");
-        for (Game groupedGame : gamesByName) {
+        System.out.println("Found: " + targetGamesList.size() + " game(s) that match:");
+        for (Game groupedGame : targetGamesList) {
             System.out.println(groupedGame.toString());
         }
+    }
+
+    public String returnData(String targetData, Game currentGame) {
+        if (targetData.equals("year")) {
+            return currentGame.getYear();
+        } else if (targetData.equals("platform")) {
+            return currentGame.getConsole();
+        } else if (targetData.equals("name")) {
+            return currentGame.getName();
+        } else if (targetData.equals("rating")) {
+            return currentGame.getRating();
+        }
+        return null;
     }
 
     public String santitizeString(String stringToBeSanitized) {
