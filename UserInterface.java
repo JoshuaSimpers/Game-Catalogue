@@ -1,13 +1,18 @@
 import java.util.Scanner;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.nio.file.Files;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class UserInterface {
     
+    private File mainFile;
+    private File mainFileCopy;
     private Scanner scanner = new Scanner(System.in);
     private ArrayList<Game> gameList = new ArrayList<>();
 
@@ -16,7 +21,7 @@ public class UserInterface {
     }
 
     public void start() {
-        System.out.println("== Video Game Catalogue v0.5.1 by Joshua Simpers ==");
+        System.out.println("\n == Video Game Catalogue v0.5.1 by Joshua Simpers == \n");
         createFile();
         readFile();
         readCommands();
@@ -24,13 +29,38 @@ public class UserInterface {
 
     public void createFile() {
         try {
-            File fileObj = new File("cat.csv");
-            if (fileObj.createNewFile()) {
-                System.out.println(fileObj.getName() + " created!");
+            mainFile = new File("cat.csv");
+            if (mainFile.createNewFile()) {
+                System.out.println(mainFile.getName() + " created!");
             } else {
-                System.out.println(fileObj.getName() + " already exists.");
+                System.out.println(mainFile.getName() + " already exists. \n");
             }
         } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void createFileCopy() {
+        try {
+            mainFileCopy = new File("catCopy.csv");
+            if (mainFileCopy.createNewFile()) {
+                System.out.println(mainFileCopy.getName() + " created!");
+            } else {
+                System.out.println(mainFileCopy.getName() + " already exists. \n");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteOldFileAndRenameCopy(File oldFile, File copy) {
+        oldFile.delete();
+        Path source = copy.toPath();
+        try {
+            Files.move(source, source.resolveSibling("cat.csv"), StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
@@ -51,9 +81,9 @@ public class UserInterface {
         }
     }
 
-    public void writeToFile(String name, String console, String releaseYear, String rating, int copies) {
+    public void writeToFile(String targetFile, String name, String console, String releaseYear, String rating, int copies) {
         try {
-            BufferedWriter catalogueWriter = new BufferedWriter(new FileWriter("cat.csv", true));
+            BufferedWriter catalogueWriter = new BufferedWriter(new FileWriter(targetFile, true));
             catalogueWriter.write(name + ", " + console + ", " + releaseYear + ", " + rating + ", " + copies);
             catalogueWriter.newLine();
             catalogueWriter.close();
@@ -109,12 +139,19 @@ public class UserInterface {
         Game targetGame;
         System.out.println("Name: ");
         String name = readInput();
+        name = santitizeString(name);
         System.out.println("Platform: ");
         String platform = readInput();
+        platform = santitizeString(platform);
         targetGame = gameFound(name, platform);
-        if (!targetGame.equals(null)) {
+        if (gameFound(name, platform) != null) {
             System.out.println("Game already exists! Increasing the amount of copies of the game by 1!");
             targetGame.increaseCopies(1);
+            createFileCopy();
+            for (Game game : gameList) {
+                writeToFile("catCopy.csv", game.getName(), game.getConsole(), game.getYear(), game.getRating(), game.getCopies());
+            }
+            deleteOldFileAndRenameCopy(mainFile, mainFileCopy);
         } else {
             System.out.println("Year: ");
             String year = readInput();
@@ -124,7 +161,7 @@ public class UserInterface {
             String copies = readInput();
             Integer copiesToInt = Integer.valueOf(copies);
             gameList.add(new Game(name, platform, year, rating, copiesToInt));
-            writeToFile(name, platform, year, rating, copiesToInt);
+            writeToFile("cat.csv" ,name, platform, year, rating, copiesToInt);
         }
     }
 
@@ -139,7 +176,11 @@ public class UserInterface {
 
     public Game gameFound(String name, String platform) {
         for (Game game : gameList) {
-            if (game.getName().equals(name) && game.getConsole().equals(platform)) {
+            String santizedName = game.getName();
+            String sanitizedPlatform = game.getConsole();
+            santizedName = santitizeString(santizedName);
+            sanitizedPlatform = santitizeString(sanitizedPlatform);
+            if (santizedName.equals(name) && sanitizedPlatform.equals(platform)) {
                 return game;
             }
         }
@@ -153,26 +194,40 @@ public class UserInterface {
             Integer amount = Integer.valueOf(readInput());
             targetGame.decreaseCopies(amount);
             System.out.println("Amount of copies successfully reduced by " + amount + "!");
+            createFileCopy();
+            for (Game game : gameList) {
+                writeToFile("catCopy.csv", game.getName(), game.getConsole(), game.getYear(), game.getRating(), game.getCopies());
+            }
+            deleteOldFileAndRenameCopy(mainFile, mainFileCopy);
         }
         else {
-            gameList.remove(gameFound(name, platform));
+            createFileCopy();
+            for (Game game : gameList) {
+                if (!game.equals(targetGame)) {
+                    writeToFile("catCopy.csv", game.getName(), game.getConsole(), game.getYear(), game.getRating(), game.getCopies());
+                }
+            }
+            gameList.remove(targetGame);
+            deleteOldFileAndRenameCopy(mainFile, mainFileCopy);
         }
+
     }
 
     public void removeGameFromCatalogue() {
         System.out.println("What game would you like to remove?");
-        while (true) {
-            System.out.println("Name: ");
-            String name = readInput();
-            System.out.println("Platform: ");
-            String platform = readInput();
-            if (!gameFound(name, platform).equals(null)) {
-                System.out.println("Game not found! Cancelling the operation!");
-                break;
-            }
+        System.out.println("Name: ");
+        String name = readInput();
+        System.out.println("Platform: ");
+        String platform = readInput();
+        name = santitizeString(name);
+        platform = santitizeString(platform);
+        System.out.println(name);
+        System.out.println(platform);
+        if (gameFound(name, platform) == null) {
+            System.out.println("Game not found! Cancelling the operation!");    
+        } else {
             removeGame(name, platform);
             System.out.println("Game successfully removed!");
-            break;
         }
     }
 
