@@ -21,7 +21,7 @@ public class UserInterface {
     }
 
     public void start() {
-        System.out.println("\n == Video Game Catalogue v0.5.1 by Joshua Simpers == \n");
+        System.out.println("\n == Video Game Catalogue v0.6.0 by Joshua Simpers == \n");
         createFile();
         readFile();
         readCommands();
