@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class UserInterface {
     
@@ -87,7 +88,6 @@ public class UserInterface {
             catalogueWriter.write(name + ", " + console + ", " + releaseYear + ", " + rating + ", " + copies);
             catalogueWriter.newLine();
             catalogueWriter.close();
-            System.out.println("Game added to catalogue!");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -130,19 +130,36 @@ public class UserInterface {
     }
 
     public void listGamesInCatalogue() {
+        listInOrderByCriteria();
+        String command = readInput();
+        if (command.equals("1")) {
+            
+        } else if (command.equals("2")) {
+            
+        } else if (command.equals("3")) {
+
+        } else {
+            System.out.println("Unrecognized command. Returning to menu.");
+            readCommands();
+        }
         for (Game game : this.gameList) {
             System.out.println(game.toString());
         }
+    }
+
+    public void listInOrderByCriteria() {
+        System.out.println("== 1 - Lists the games in order alphabetically ==");
+        System.out.println("== 2 - Lists the games by their age (Oldest to Newest) ==");
+        System.out.println("== 3 - Lists the games by their age (Newest to Oldest) ==");
+        System.out.println("Type:");
     }
 
     public void addGameToCatalogue() {
         Game targetGame;
         System.out.println("Name: ");
         String name = readInput();
-        name = santitizeString(name);
         System.out.println("Platform: ");
         String platform = readInput();
-        platform = santitizeString(platform);
         targetGame = gameFound(name, platform);
         if (gameFound(name, platform) != null) {
             System.out.println("Game already exists! Increasing the amount of copies of the game by 1!");
@@ -163,6 +180,7 @@ public class UserInterface {
             gameList.add(new Game(name, platform, year, rating, copiesToInt));
             writeToFile("cat.csv" ,name, platform, year, rating, copiesToInt);
         }
+        System.out.println("Game added to catalogue!");
     }
 
     public String readInput() {
@@ -249,11 +267,11 @@ public class UserInterface {
     }
 
     public void listFindCommands() {
-        System.out.println("== Year - Finds games based on the desired yea r==");
+        System.out.println("== Year - Finds games based on the desired year ==");
         System.out.println("== Platform - Finds games based on the platform of release ==");
-        System.out.println("== Rating - Finds games by their ESRB rating ==");
+        System.out.println("== Rating - Finds games by their rating ==");
         System.out.println("== Name - Finds games that match the given name ==");
-        System.out.println("== Cancel - returns to the previous menu ==");
+        System.out.println("== Cancel - returns to the previous menu == \n");
         System.out.println("Command:");
     }
 

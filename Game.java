@@ -1,4 +1,4 @@
-public class Game {
+public class Game implements Comparable<Game> {
     
     private String name;
     private String console;
@@ -45,5 +45,10 @@ public class Game {
     @Override
     public String toString() {
         return "Name: " + getName() + ", Platform: " + getConsole() + ", Year: " + getYear() + ", Rating: " + getRating() + ", Number of Copies: " + getCopies();
+    }
+
+    @Override
+    public int compareTo(Game comparedGame){
+        return -1;
     }
 }
