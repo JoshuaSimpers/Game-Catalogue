@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class UserInterface {
     
@@ -23,14 +22,14 @@ public class UserInterface {
 
     public void start() {
         System.out.println("\n == Video Game Catalogue v0.6.0 by Joshua Simpers == \n");
-        createFile();
+        createMainFile("cat.csv");
         readFile();
         readCommands();
     }
 
-    public void createFile() {
+    public void createMainFile(String fileName) {
         try {
-            mainFile = new File("cat.csv");
+            mainFile = new File(fileName);
             if (mainFile.createNewFile()) {
                 System.out.println(mainFile.getName() + " created!");
             } else {
@@ -42,9 +41,9 @@ public class UserInterface {
         }
     }
 
-    public void createFileCopy() {
+    public void createMainFileCopy(String fileName) {
         try {
-            mainFileCopy = new File("catCopy.csv");
+            mainFileCopy = new File(fileName);
             if (mainFileCopy.createNewFile()) {
                 System.out.println(mainFileCopy.getName() + " created!");
             } else {
@@ -130,28 +129,19 @@ public class UserInterface {
     }
 
     public void listGamesInCatalogue() {
-        listInOrderByCriteria();
-        String command = readInput();
-        if (command.equals("1")) {
-            
-        } else if (command.equals("2")) {
-            
-        } else if (command.equals("3")) {
-
-        } else {
-            System.out.println("Unrecognized command. Returning to menu.");
-            readCommands();
-        }
-        for (Game game : this.gameList) {
+        for (Game game : gameList) {
             System.out.println(game.toString());
         }
     }
 
-    public void listInOrderByCriteria() {
-        System.out.println("== 1 - Lists the games in order alphabetically ==");
-        System.out.println("== 2 - Lists the games by their age (Oldest to Newest) ==");
-        System.out.println("== 3 - Lists the games by their age (Newest to Oldest) ==");
-        System.out.println("Type:");
+    public void findOldestGame(ArrayList<Game> list) {
+        Game oldestGame = gameList.get(0);
+        for (Game game : gameList) {
+            if (Integer.valueOf(game.getYear()) <= Integer.valueOf(oldestGame.getYear()) && !list.contains(game)) {
+                oldestGame = game;
+                list.add(oldestGame);
+            }
+        }
     }
 
     public void addGameToCatalogue() {
@@ -164,7 +154,7 @@ public class UserInterface {
         if (gameFound(name, platform) != null) {
             System.out.println("Game already exists! Increasing the amount of copies of the game by 1!");
             targetGame.increaseCopies(1);
-            createFileCopy();
+            createMainFileCopy("catCopy.csv");
             for (Game game : gameList) {
                 writeToFile("catCopy.csv", game.getName(), game.getConsole(), game.getYear(), game.getRating(), game.getCopies());
             }
@@ -198,6 +188,8 @@ public class UserInterface {
             String sanitizedPlatform = game.getConsole();
             santizedName = santitizeString(santizedName);
             sanitizedPlatform = santitizeString(sanitizedPlatform);
+            name = santitizeString(name);
+            platform = santitizeString(platform);
             if (santizedName.equals(name) && sanitizedPlatform.equals(platform)) {
                 return game;
             }
@@ -212,14 +204,14 @@ public class UserInterface {
             Integer amount = Integer.valueOf(readInput());
             targetGame.decreaseCopies(amount);
             System.out.println("Amount of copies successfully reduced by " + amount + "!");
-            createFileCopy();
+            createMainFileCopy("catCopy.csv");
             for (Game game : gameList) {
                 writeToFile("catCopy.csv", game.getName(), game.getConsole(), game.getYear(), game.getRating(), game.getCopies());
             }
             deleteOldFileAndRenameCopy(mainFile, mainFileCopy);
         }
         else {
-            createFileCopy();
+            createMainFileCopy("catCopy.csv");
             for (Game game : gameList) {
                 if (!game.equals(targetGame)) {
                     writeToFile("catCopy.csv", game.getName(), game.getConsole(), game.getYear(), game.getRating(), game.getCopies());
